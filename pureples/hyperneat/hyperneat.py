@@ -7,13 +7,13 @@ def create_phenotype_network(cppn, substrate, activation_function="sigmoid"):
     output_coordinates = substrate.output_coordinates
     hidden_coordinates = substrate.hidden_coordinates  # List of layers, first index = top layer.
 
-    input_nodes = range(len(input_coordinates))
-    output_nodes = range(len(input_nodes), len(input_nodes)+len(output_coordinates))
+    input_nodes = list(range(len(input_coordinates)))
+    output_nodes = list(range(len(input_nodes), len(input_nodes)+len(output_coordinates)))
 
     counter = 0
     for layer in hidden_coordinates:
         counter += len(layer)
-    hidden_nodes = range(len(input_nodes)+len(output_nodes), len(input_nodes)+len(output_nodes)+counter)
+    hidden_nodes = list(range(len(input_nodes)+len(output_nodes), len(input_nodes)+len(output_nodes)+counter))
 
     node_evals = []
 
