@@ -12,12 +12,12 @@ from pureples.shared.gym_runner import run_neat
 # Config for NEAT.
 CONFIG = neat.config.Config(neat.genome.DefaultGenome, neat.reproduction.DefaultReproduction,
                             neat.species.DefaultSpeciesSet, neat.stagnation.DefaultStagnation,
-                            'config_neat_mountain_car')
+                            'pureples/experiments/mountain_car/config_neat_mountain_car')
 
 
 def run(gens, env):
     """
-    Run the pole balancing task using the Gym environment
+    Run the mountain car task using the Gym environment
     Returns the winning genome and the statistics of the run.
     """
     winner, stats = run_neat(gens, env, 200, CONFIG, max_trials=0)
@@ -37,6 +37,6 @@ if __name__ == '__main__':
 
     # Save net if wished reused and draw it to file.
     NET = neat.nn.FeedForwardNetwork.create(WINNER, CONFIG)
-    draw_net(NET, filename="neat_mountain_car_winner")
-    with open('neat_mountain_car_winner.pkl', 'wb') as output:
+    draw_net(NET, filename="pureples/experiments/mountain_car/neat_mountain_car_winner")
+    with open('pureples/experiments/mountain_car/neat_mountain_car_winner.pkl', 'wb') as output:
         pickle.dump(NET, output, pickle.HIGHEST_PROTOCOL)

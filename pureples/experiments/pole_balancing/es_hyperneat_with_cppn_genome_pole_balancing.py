@@ -1,12 +1,13 @@
 """
-An experiment using a variable-sized ES-HyperNEAT network to perform a mountain car task.
+An experiment using a variable-sized ES-HyperNEAT network to perform a pole balancing task.
 """
 
-import logging
 import pickle
+import logging
 import neat
 import gym
 from pureples.shared.visualize import draw_net
+from pureples.shared.genome import CppnGenome
 from pureples.shared.substrate import Substrate
 from pureples.shared.gym_runner import run_es
 from pureples.es_hyperneat.es_hyperneat import ESNetwork
@@ -15,10 +16,13 @@ from pureples.es_hyperneat.es_hyperneat import ESNetwork
 VERSION = "S"
 VERSION_TEXT = "small" if VERSION == "S" else "medium" if VERSION == "M" else "large"
 
-# Network input and output coordinates.
-INPUT_COORDINATES = [(-0.33, -1.), (0.33, -1.)]
-OUTPUT_COORDINATES = [(-0.5, 1.), (0., 1.), (0.5, 1.)]
+# Network coordinates and the resulting substrate.
+INPUT_COORDINATES = []
 
+for i in range(0, 4):
+    INPUT_COORDINATES.append((-1. + (2.*i/3.), -1.))
+
+OUTPUT_COORDINATES = [(-1., 1.), (1., 1.)]
 SUBSTRATE = Substrate(INPUT_COORDINATES, OUTPUT_COORDINATES)
 
 
@@ -37,19 +41,18 @@ def params(version):
 
 
 # Config for CPPN.
-CONFIG = neat.config.Config(neat.genome.DefaultGenome, neat.reproduction.DefaultReproduction,
+CONFIG = neat.config.Config(CppnGenome, neat.reproduction.DefaultReproduction,
                             neat.species.DefaultSpeciesSet, neat.stagnation.DefaultStagnation,
-                            'pureples/experiments/mountain_car/config_cppn_mountain_car')
+                            'pureples/experiments/pole_balancing/config_cppn_genome_pole_balancing')
 
 
 def run(gens, env, version):
     """
-    Run the mountain car task using the Gym environment
+    Run the pole balancing task using the Gym environment
     Returns the winning genome and the statistics of the run.
     """
-    winner, stats = run_es(gens, env, 200, CONFIG, params(
-        version), SUBSTRATE, max_trials=0)
-    print(f"es_hyperneat_mountain_car_{VERSION_TEXT} done")
+    winner, stats = run_es(gens, env, 500, CONFIG, params(version), SUBSTRATE)
+    print(f"es_hyperneat_with_cppn_genome_polebalancing_{VERSION_TEXT} done")
     return winner, stats
 
 
@@ -58,16 +61,17 @@ if __name__ == '__main__':
     # Setup logger and environment.
     LOGGER = logging.getLogger()
     LOGGER.setLevel(logging.INFO)
-    ENVIRONMENT = gym.make("MountainCar-v0")
+    ENVIRONMENT = gym.make("CartPole-v1")
 
     # Run! Only relevant to look at the winner.
-    WINNER = run(200, ENVIRONMENT, VERSION)[0]
+    WINNER = run(100, ENVIRONMENT, VERSION)[0]
 
     # Save CPPN if wished reused and draw it + winner to file.
     CPPN = neat.nn.FeedForwardNetwork.create(WINNER, CONFIG)
     NETWORK = ESNetwork(SUBSTRATE, CPPN, params(VERSION))
     NET = NETWORK.create_phenotype_network(
-        filename=f"pureples/experiments/mountain_car/es_hyperneat_mountain_car_{VERSION_TEXT}_winner")
-    draw_net(CPPN, filename=f"pureples/experiments/mountain_car/es_hyperneat_mountain_car_{VERSION_TEXT}_cppn")
-    with open(f'pureples/experiments/mountain_car/es_hyperneat_mountain_car_{VERSION_TEXT}_cppn.pkl', 'wb') as output:
+        filename=f"pureples/experiments/pole_balancing/es_hyperneat_with_cppn_genome_pole_balancing_{VERSION_TEXT}_winner")
+    draw_net(
+        CPPN, filename=f"pureples/experiments/pole_balancing/es_hyperneat_with_cppn_genome_pole_balancing_{VERSION_TEXT}_cppn")
+    with open(f'pureples/experiments/pole_balancing/es_hyperneat_with_cppn_genome_pole_balancing_{VERSION_TEXT}_cppn.pkl', 'wb') as output:
         pickle.dump(CPPN, output, pickle.HIGHEST_PROTOCOL)

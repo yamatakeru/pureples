@@ -24,12 +24,12 @@ ACTIVATIONS = len(HIDDEN_COORDINATES) + 2
 # Config for CPPN.
 CONFIG = neat.config.Config(neat.genome.DefaultGenome, neat.reproduction.DefaultReproduction,
                             neat.species.DefaultSpeciesSet, neat.stagnation.DefaultStagnation,
-                            'config_cppn_mountain_car')
+                            'pureples/experiments/mountain_car/config_cppn_mountain_car')
 
 
 def run(gens, env):
     """
-    Run the pole balancing task using the Gym environment
+    Run the mountain car task using the Gym environment
     Returns the winning genome and the statistics of the run.
     """
     winner, stats = run_hyper(gens, env, 200, CONFIG,
@@ -51,7 +51,7 @@ if __name__ == '__main__':
     # Save CPPN if wished reused and draw it + winner to file.
     cppn = neat.nn.FeedForwardNetwork.create(WINNER, CONFIG)
     NET = create_phenotype_network(cppn, SUBSTRATE)
-    draw_net(cppn, filename="hyperneat_mountain_car_cppn")
-    draw_net(NET, filename="hyperneat_mountain_car_winner")
-    with open('hyperneat_mountain_car_cppn.pkl', 'wb') as output:
+    draw_net(cppn, filename="pureples/experiments/mountain_car/hyperneat_mountain_car_cppn")
+    draw_net(NET, filename="pureples/experiments/mountain_car/hyperneat_mountain_car_winner")
+    with open('pureples/experiments/mountain_car/hyperneat_mountain_car_cppn.pkl', 'wb') as output:
         pickle.dump(cppn, output, pickle.HIGHEST_PROTOCOL)

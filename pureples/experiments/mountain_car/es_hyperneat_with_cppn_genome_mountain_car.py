@@ -7,6 +7,7 @@ import pickle
 import neat
 import gym
 from pureples.shared.visualize import draw_net
+from pureples.shared.genome import CppnGenome
 from pureples.shared.substrate import Substrate
 from pureples.shared.gym_runner import run_es
 from pureples.es_hyperneat.es_hyperneat import ESNetwork
@@ -37,9 +38,9 @@ def params(version):
 
 
 # Config for CPPN.
-CONFIG = neat.config.Config(neat.genome.DefaultGenome, neat.reproduction.DefaultReproduction,
+CONFIG = neat.config.Config(CppnGenome, neat.reproduction.DefaultReproduction,
                             neat.species.DefaultSpeciesSet, neat.stagnation.DefaultStagnation,
-                            'pureples/experiments/mountain_car/config_cppn_mountain_car')
+                            'pureples/experiments/mountain_car/config_cppn_genome_mountain_car')
 
 
 def run(gens, env, version):
@@ -49,7 +50,7 @@ def run(gens, env, version):
     """
     winner, stats = run_es(gens, env, 200, CONFIG, params(
         version), SUBSTRATE, max_trials=0)
-    print(f"es_hyperneat_mountain_car_{VERSION_TEXT} done")
+    print(f"es_hyperneat_with_cppn_genome_mountain_car_{VERSION_TEXT} done")
     return winner, stats
 
 
@@ -67,7 +68,7 @@ if __name__ == '__main__':
     CPPN = neat.nn.FeedForwardNetwork.create(WINNER, CONFIG)
     NETWORK = ESNetwork(SUBSTRATE, CPPN, params(VERSION))
     NET = NETWORK.create_phenotype_network(
-        filename=f"pureples/experiments/mountain_car/es_hyperneat_mountain_car_{VERSION_TEXT}_winner")
-    draw_net(CPPN, filename=f"pureples/experiments/mountain_car/es_hyperneat_mountain_car_{VERSION_TEXT}_cppn")
-    with open(f'pureples/experiments/mountain_car/es_hyperneat_mountain_car_{VERSION_TEXT}_cppn.pkl', 'wb') as output:
+        filename=f"pureples/experiments/mountain_car/es_hyperneat_with_cppn_genome_mountain_car_{VERSION_TEXT}_winner")
+    draw_net(CPPN, filename=f"pureples/experiments/mountain_car/es_hyperneat_with_cppn_genome_mountain_car_{VERSION_TEXT}_cppn")
+    with open(f'pureples/experiments/mountain_car/es_hyperneat_with_cppn_genome_mountain_car_{VERSION_TEXT}_cppn.pkl', 'wb') as output:
         pickle.dump(CPPN, output, pickle.HIGHEST_PROTOCOL)
