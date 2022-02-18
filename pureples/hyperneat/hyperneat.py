@@ -107,8 +107,12 @@ def query_cppn(coord1, coord2, outgoing, cppn, max_weight=5.0):
     w = cppn.activate(i)[0]
     if abs(w) > 0.2:  # If abs(weight) is below threshold, treat weight as 0.0.
         if w > 0:
+            if w > 1.0: # If weight is over 1.0, treat weight as 1.0.
+                w = 1.0
             w = (w - 0.2) / 0.8
         else:
+            if w < -1.0: # If weight is below -1.0, treat weight as -1.0.
+                w = -1.0
             w = (w + 0.2) / 0.8
         return w * max_weight
     else:
